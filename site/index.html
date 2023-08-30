@@ -1,0 +1,102 @@
+<!doctype html>
+<html>
+    <head>
+        <meta name="viewport" content="initial-scale=1,maximum-scale=5,minimum-scale=1,width=device-width">
+        <title>Koe 2</title>
+    </head>
+    <body>
+        <style>
+            img {
+                display: block;
+                position: absolute;
+                top: 10%;
+                left: 10%;
+                width: 80%;
+                height: 80%;
+                /* right: 10%;
+                bottom: 10%; */
+
+                object-fit: contain;
+                object-position: center center;
+
+                /* background-position: center center;
+                background-size: contain;
+                background-repeat: no-repeat; */
+            }
+
+            .talking {
+                opacity: 1;
+                animation-name: test;
+                animation-duration: 1s;
+                animation-iteration-count: infinite;
+            }
+            .hide {
+                display: none;
+            }
+
+            @keyframes test {
+                0% {
+                    transform: rotate(0deg);
+                }
+
+                25% {
+                    transform: rotate(10deg);
+                }
+
+                75% {
+                    transform: rotate(-10deg);
+                }
+
+                100% {
+                    transform: rotate(0deg);
+                }
+            }
+        </style>
+
+        <script type="module">
+            import { Chat } from "https://esm.sh/@axel669/twitch@1.2.1/browser/module.mjs"
+            import { play, speaking } from "./speak.mjs"
+
+            const url = new URL(location)
+            const preset = url.searchParams.get("preset")
+
+            const talk = ({ data }) => {
+                if (data.tags.customRewardID !== "3e91eca7-d3bb-4362-9085-9f13b0862d39") {
+                    return
+                }
+                play(data.message, preset)
+            }
+            // speaking.on("*", console.log)
+            speaking.on("start", () => {
+                quiet.classList.add("hide")
+                talking.classList.remove("hide")
+                talking.classList.add("talking")
+            })
+            speaking.on("end", () => {
+                quiet.classList.remove("hide")
+                talking.classList.add("hide")
+                talking.classList.remove("talking")
+            })
+
+            const chat = Chat({
+                user: {
+                    name: "justinfan669",
+                    token: ""
+                },
+                channel: "axel669"
+            })
+            chat.on("chat.redeem", talk)
+            const connected = await chat.connect()
+            console.log(connected)
+
+            const quiet = document.createElement("img")
+            quiet.src = `${preset}-quiet.png`
+
+            const talking = document.createElement("img")
+            talking.src = `${preset}-talking.gif`
+            talking.classList.add("hide")
+
+            document.body.append(quiet, talking)
+        </script>
+    </body>
+</html>
