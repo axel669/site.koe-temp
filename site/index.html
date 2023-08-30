@@ -54,8 +54,12 @@
             const url = new URL(location)
             const preset = url.searchParams.get("preset")
 
+            const rewards = [
+                "45a20aa1-6a5b-4f1f-8377-e3fc3aca1cfc",
+                "3e91eca7-d3bb-4362-9085-9f13b0862d39"
+            ]
             const talk = ({ data }) => {
-                if (data.tags.customRewardID !== "3e91eca7-d3bb-4362-9085-9f13b0862d39") {
+                if (rewards.includes(data.tags.customRewardID) === false) {
                     return
                 }
                 play(data.message, preset)
